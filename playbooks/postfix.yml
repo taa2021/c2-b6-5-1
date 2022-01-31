@@ -1,0 +1,51 @@
+---
+
+- name: Setup Postfix
+  remote_user: ubuntu
+  hosts: all
+
+  tasks:
+    - name: Print a postfix-init message
+      ansible.builtin.debug:
+        msg: "Postfix init"
+      tags:
+      - init postfix
+
+
+    - name: Install Postfix
+      become: true
+      ansible.builtin.package:
+        name: postfix
+        state: present
+      tags:
+      - init postfix
+
+    - name: Enable service Postfix
+      become: true
+      ansible.builtin.service:
+        name: postfix
+        enabled: yes
+      tags:
+      - init postfix
+
+    - name: Start service Postfix, if not started
+      become: true
+      ansible.builtin.service:
+        name: postfix
+        state: started
+      tags:
+      - init postfix
+
+    - name: Print a postfix-drop message
+      ansible.builtin.debug:
+        msg: "Postfix drop"
+      tags:
+      - drop postfix
+
+    - name: Delete Postfix
+      become: true
+      ansible.builtin.package:
+        name: postfix
+        state: absent
+      tags:
+      - drop postfix

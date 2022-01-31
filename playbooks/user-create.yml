@@ -1,0 +1,35 @@
+---
+# Установка и запуск службы запуска docker-а
+
+- name: Create user
+  remote_user: ubuntu
+  hosts: all
+
+  tasks:
+    - name: Add the user 'user1'
+      become: True
+      ansible.builtin.user:
+        name: user1
+        shell: /bin/bash
+        create_home: True
+        home: /home/user1
+        state: present
+
+
+    - name: Create .ssh directory for user1
+      become: True
+      ansible.builtin.file:
+        path: /home/user1/.ssh
+        state: directory
+        mode: '0755'
+        owner: user1
+        group: user1
+
+    - name: Copy ssh-pub-key to user1 home directory
+      become: True
+      ansible.builtin.copy:
+        src: files/ssh-key-pub.bin
+        dest: /home/user1/.ssh/id_rsa.pub
+        mode: 0644
+        owner: user1
+        group: user1
